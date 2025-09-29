@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # MQTT Broker (Eclipse Mosquitto)
+  mqtt:
+    image: eclipse-mosquitto:2.0
+    container_name: smarttodo-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./docker/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./docker/mosquitto/data:/mosquitto/data
+      - ./docker/mosquitto/log:/mosquitto/log
+    networks:
+      - smarttodo-network
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: smarttodo-postgres
+    environment:
+      POSTGRES_DB: smarttodo
+      POSTGRES_USER: smarttodo
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smarttodo-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  smarttodo-network:
+    driver: bridge

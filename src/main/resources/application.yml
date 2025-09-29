@@ -1,0 +1,84 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smart-todo-backend
+
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# Configurações específicas para Computer Vision
+smarttodo:
+  computer-vision:
+    enabled: true
+    camera-index: 0
+    analysis-interval: 5000  # 5 segundos
+    face-detection-enabled: true
+    mood-analysis-enabled: true
+    debug-mode: true
+
+    iot:
+      enabled: true
+      simulation-mode: true  # true para usar simulador
+      mqtt:
+        broker-url: tcp://localhost:1883
+        client-id: smart-todo-backend
+        username: ""
+        password: ""
+        topics:
+          sensors: "sensors/+/data"
+          location: "location/user/+"
+          commands: "smarthome/commands"
+
+      influxdb:
+        url: http://localhost:8086
+        token: "demo-token"
+        org: "smarttodo"
+        bucket: "sensor-data"
+        enabled: false  # true quando tiver InfluxDB rodando
+
+
+  features:
+    mood-adjustment: true
+    location-awareness: true
+    smart-suggestions: true
+    environmental-awareness: true
+
+# Logging (UMA SÓ SEÇÃO)
+logging:
+  level:
+    com.smarttodo: DEBUG
+    com.smarttodo.cv: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
